@@ -24,6 +24,8 @@ def distribute_poisson():
     )
 ```
 
+## Task 2
+
 First 10 values with lambda = 0.5:
 
 ```bash
@@ -36,7 +38,7 @@ Results: (0.6065306597126334, 0.3032653298563167, 0.07581633246407918, 0.0126360
 ```
 
 
-## Task 2
+## Task 3
 
 Exponential distribution with parameters n and lambda:
 
@@ -54,8 +56,6 @@ def distribute_exponentially():
         for x in range(values_number)
     )
 ```
-
-## Task 3
 
 First 10 values distributed exponentially.
 
