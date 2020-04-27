@@ -7,34 +7,40 @@ Tasks for getting credit.
 Poisson distribution with parameters n, lambda and t:
 
 ```Python
-def distribute_poisson():
-    """Return tuple of `n` values distributed using Poisson method.
+def distribute_poisson(_lambda, time, k):
+    """Return tuple of `n` values distributed using Poisson method."""
+    return ((_lambda * time) ** k) * exp(-_lambda * time) / factorial(k)
 
-    Task 1 and 2 from course credit.
-    """
-    values_number, _lambda, time = input_parameters()
+
+def generate_value_poisson():
+    _lambda, time = input_parameters()
     # Factorial argument cannot be negative
     while _lambda * time <= 0.0 and time < 0:
         print('lambda * time should be positive.\n Please input correct values\n')
-        values_number, _lambda, time = input_parameters()
+        _lambda, time = input_parameters()
 
-    return tuple(
-        ((_lambda * time) ** k) * exp(-_lambda * time) / factorial(k)
-        for k in range(values_number)
-    )
+    for _ in range(10):
+        random_value = random()
+        result = 0
+
+        probabilites_sum = distribute_poisson(_lambda, time, result)
+        while random_value > probabilites_sum:
+            result += 1
+            probabilites_sum += distribute_poisson(_lambda, time, result)
+
+        yield result
 ```
 
 ## Task 2
 
-First 10 values with lambda = 0.5:
+Random 10 values with lambda = 0.5:
 
 ```bash
-python main.py poisson
-Input n (default: 10): 10
+$ python main.py poisson
 Input lambda (default: 0.5): 0.5
 Input t (default: 1): 1
 
-Results: (0.6065306597126334, 0.3032653298563167, 0.07581633246407918, 0.012636055410679864, 0.001579506926334983, 0.0001579506926334983, 1.316255771945819e-05, 9.401826942470136e-07, 5.876141839043835e-08, 3.2645232439132415e-09)
+Results: (1, 0, 2, 1, 1, 0, 2, 0, 1, 1)
 ```
 
 
@@ -44,17 +50,13 @@ Exponential distribution with parameters n and lambda:
 
 ```Python
 def distribute_exponentially():
-    """Return tuple of `n` values distributed using Exponential method.
-
-    Task 3 from course credit.
-    """
+    """Return tuple of `n` values distributed using Exponential method."""
     values_number = int(input('Input n (default: 10): ') or 10)
     _lambda = float(input('Input lambda (default: 0.5): ') or 0.5)
 
-    return tuple(
-        (1 - exp(-_lambda * x)) if x > 0 else 0
-        for x in range(values_number)
-    )
+    for _ in range(values_number):
+        x = random()
+        yield (1 - exp(-_lambda * x)) if x > 0 else 0
 ```
 
 First 10 values distributed exponentially.
@@ -64,5 +66,5 @@ python main.py exp
 Input n (default: 10): 10
 Input lambda (default: 0.5): 0.5
 
-Results: (0, 0.3934693402873666, 0.6321205588285577, 0.7768698398515702, 0.8646647167633873, 0.9179150013761012, 0.950212931632136, 0.9698026165776815, 0.9816843611112658, 0.9888910034617577)
+Results: (0.2499381970303719, 0.03218976226709691, 0.2393197147396946, 0.2451432860755659, 0.3696512538218808, 0.2591434497242815, 0.20007211649649959, 0.10887617175665742, 0.014938490591884679, 0.04104118076990437)
 ```

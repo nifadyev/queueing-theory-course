@@ -1,55 +1,58 @@
 """Set of functions for Queueing Theory Course."""
 
 import sys
+from random import random
 from math import factorial, exp
 
 
 def input_parameters():
     """Return input parameters of valid type."""
-    values_number = int(input('Input n (default: 10): ') or 10)
     _lambda = float(input('Input lambda (default: 0.5): ') or 0.5)
     time = int(input('Input t (default: 1): ') or 1)
 
-    return values_number, _lambda, time
+    return _lambda, time
 
 
-def distribute_poisson():
-    """Return tuple of `n` values distributed using Poisson method.
+def distribute_poisson(_lambda, time, k):
+    """Return tuple of `n` values distributed using Poisson method."""
+    return ((_lambda * time) ** k) * exp(-_lambda * time) / factorial(k)
 
-    Task 1 and 2 from course credit.
-    """
-    values_number, _lambda, time = input_parameters()
+
+def generate_value_poisson():
+    _lambda, time = input_parameters()
     # Factorial argument cannot be negative
     while _lambda * time <= 0.0 and time < 0:
         print('lambda * time should be positive.\n Please input correct values\n')
-        values_number, _lambda, time = input_parameters()
+        _lambda, time = input_parameters()
 
-    return tuple(
-        ((_lambda * time) ** k) * exp(-_lambda * time) / factorial(k)
-        for k in range(values_number)
-    )
+    for _ in range(10):
+        random_value = random()
+        result = 0
+
+        probabilites_sum = distribute_poisson(_lambda, time, result)
+        while random_value > probabilites_sum:
+            result += 1
+            probabilites_sum += distribute_poisson(_lambda, time, result)
+
+        yield result
 
 
 def distribute_exponentially():
-    """Return tuple of `n` values distributed using Exponential method.
-
-    Task 3 from course credit.
-    """
+    """Return tuple of `n` values distributed using Exponential method."""
     values_number = int(input('Input n (default: 10): ') or 10)
     _lambda = float(input('Input lambda (default: 0.5): ') or 0.5)
 
-    return tuple(
-        (1 - exp(-_lambda * x)) if x > 0 else 0
-        for x in range(values_number)
-    )
+    for _ in range(values_number):
+        x = random()
+        yield (1 - exp(-_lambda * x)) if x > 0 else 0
 
 
 if __name__ == '__main__':
     DISTRIBUTION = sys.argv[1]
 
     if DISTRIBUTION == 'exp':
-        print(f'Results: {distribute_exponentially()}')
+        print(f'Results: {tuple(distribute_exponentially())}')
     elif DISTRIBUTION == 'poisson':
-        print(f'Results: {distribute_poisson()}')
+        print(f'Results: {tuple(generate_value_poisson())}')
     else:
         print('Please specify distribution method: exponential or poisson')
